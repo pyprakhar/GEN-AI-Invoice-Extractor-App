@@ -83,7 +83,7 @@ def get_gemini_response(input, image, prompt):
     return response.text
 
 # Streamlit UI Setup
-st.set_page_config(page_title="Invoice GPT- by Prakhar", layout="wide")
+st.set_page_config(page_title="Invoice GPT- by Prakhar Srivastava", layout="wide")
 st.title("📝 GEN-AI INVOICE EXTRACTOR")
 st.markdown("""
     This app allows you to upload a document (PDF or image) and ask questions based on its content.
