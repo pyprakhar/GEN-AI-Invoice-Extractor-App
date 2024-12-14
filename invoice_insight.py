@@ -113,7 +113,7 @@ st.subheader("2. Enter Your Question 🧐")
 input_prompt = st.text_input("Ask a question about the document:", key="input", help="Ask about details like invoice number, total, items, etc.")
 
 # Button to submit the question
-submit = st.button("Ask Gemini 🤖")
+submit = st.button("Ask Invoice-Gpt 🤖")
 
 # Response section
 if submit:
