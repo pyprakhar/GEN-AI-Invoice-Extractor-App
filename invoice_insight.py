@@ -1,4 +1,3 @@
-
 import os
 import logging
 from pdf2image import convert_from_path
@@ -9,6 +8,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 from tempfile import NamedTemporaryFile
 import shutil
+import tempfile
 
 # Load environment variables
 load_dotenv()
@@ -16,6 +16,9 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Constants
 SUPPORTED_FORMATS = [".pdf", ".jpg", ".jpeg", ".png"]
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
 
 # Function to check if file format is supported
 def is_supported_format(file_name: str) -> bool:
@@ -25,9 +28,10 @@ def is_supported_format(file_name: str) -> bool:
 # Process PDF function to convert pages to images
 def process_pdf(uploaded_file):
     try:
-        with NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-            shutil.copyfileobj(uploaded_file, temp_file)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+            temp_file.write(uploaded_file.getvalue())
             temp_file_path = temp_file.name
+            logging.debug(f"Temporary file saved at: {temp_file_path}")
 
         # Convert PDF to images
         images = convert_from_path(temp_file_path)
@@ -60,6 +64,7 @@ def process_pdf(uploaded_file):
 def input_image_setup(uploaded_file):
     if uploaded_file is not None:
         file_name = uploaded_file.name.lower()
+        logging.debug(f"File uploaded: {file_name}")
         if is_supported_format(file_name):
             if file_name.endswith(".pdf"):
                 image_bytes = process_pdf(uploaded_file)
@@ -85,8 +90,8 @@ def get_gemini_response(input, image, prompt):
 # Streamlit UI Setup
 st.set_page_config(page_title="Invoice GPT- by Prakhar Srivastava", layout="wide")
 st.title("📝 GEN-AI INVOICE EXTRACTOR")
-st.markdown("""
-    This app allows you to upload a document (PDF or image) and ask questions based on its content.
+st.markdown("""  
+    This app allows you to upload a document (PDF or image) and ask questions based on its content.  
     Simply upload your file, and enter a question in the text box below.
 """)
 
@@ -100,12 +105,16 @@ if uploaded_file is not None:
     st.write(f"**File uploaded**: {file_name}")
     
     # Process image
-    image_data = input_image_setup(uploaded_file)
-    
-    # Display processed image preview
-    if image_data and len(image_data) > 0:
-        st.image(image_data[0]["data"], caption="Processed Image Preview", use_container_width=True)
-    else:
+    try:
+        image_data = input_image_setup(uploaded_file)
+        
+        # Display processed image preview
+        if image_data and len(image_data) > 0:
+            st.image(image_data[0]["data"], caption="Processed Image Preview", use_container_width=True)
+        else:
+            st.error("Error processing the image. Please try again with a valid image or PDF.")
+    except Exception as e:
+        logging.error(f"Error processing the file: {e}")
         st.error("Error processing the image. Please try again with a valid image or PDF.")
 
 # User input section for prompt
@@ -128,14 +137,15 @@ if submit:
                 st.subheader("Gemini's Response 🤖")
                 st.write(response)
             except Exception as e:
+                logging.error(f"Error generating response from Gemini: {e}")
                 st.error(f"Error: {str(e)}")
     else:
         st.warning("Please upload a file and enter a question to proceed.")
 
 # Footer
-st.markdown("""
+st.markdown("""  
     ---  
-    📝 **About**: GEN-AI Tool to make analysis over the inoices 
+    📝 **About**: GEN-AI Tool to make analysis over the invoices  
     🔒 Your data is processed securely, and the file is never stored permanently, model utilised: 'gemini-1.5-pro'.  
     💬 Have a question? Reach out to support at: prakharsrivastava337@gmail.com
 """, unsafe_allow_html=True)
