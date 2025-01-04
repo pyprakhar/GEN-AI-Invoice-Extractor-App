@@ -123,6 +123,7 @@ if submit:
                 response = get_gemini_response(input_prompt, image_data, """
                     You are an expert in understanding invoices.
                     You will receive input images as invoices & you will have to answer questions based on the input image.
+                                               if you find that the image is not related to invoice just strictly say "Please upload a valid invoice, file uploaded is not an invoice". 
                 """)
                 st.subheader("Gemini's Response 🤖")
                 st.write(response)
@@ -135,6 +136,6 @@ if submit:
 st.markdown("""
     ---  
     📝 **About**: GEN-AI Tool to make analysis over the inoices 
-    🔒 Your data is processed securely, and the file is never stored permanently.  
+    🔒 Your data is processed securely, and the file is never stored permanently, model utilised: 'gemini-1.5-pro'.  
     💬 Have a question? Reach out to support at: prakharsrivastava337@gmail.com
 """, unsafe_allow_html=True)
