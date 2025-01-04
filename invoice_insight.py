@@ -15,7 +15,7 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Constants
-SUPPORTED_FORMATS = [".pdf", ".jpg", ".jpeg", ".png"]
+SUPPORTED_FORMATS = [ ".jpg", ".jpeg", ".png"]
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -25,40 +25,40 @@ def is_supported_format(file_name: str) -> bool:
     _, ext = os.path.splitext(file_name.lower())
     return ext in SUPPORTED_FORMATS
 
-# Process PDF function to convert pages to images
-def process_pdf(uploaded_file):
-    try:
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-            temp_file.write(uploaded_file.getvalue())
-            temp_file_path = temp_file.name
-            logging.debug(f"Temporary file saved at: {temp_file_path}")
+# # Process PDF function to convert pages to images
+# def process_pdf(uploaded_file):
+#     try:
+#         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+#             temp_file.write(uploaded_file.getvalue())
+#             temp_file_path = temp_file.name
+#             logging.debug(f"Temporary file saved at: {temp_file_path}")
 
-        # Convert PDF to images
-        images = convert_from_path(temp_file_path)
-        combined_image = None
+#         # Convert PDF to images
+#         images = convert_from_path(temp_file_path)
+#         combined_image = None
 
-        # Combine images vertically
-        for img in images:
-            img = img.convert("RGB")
-            if combined_image is None:
-                combined_image = img
-            else:
-                new_width = max(combined_image.width, img.width)
-                new_height = combined_image.height + img.height
-                combined_image_new = Image.new("RGB", (new_width, new_height), (255, 255, 255))
-                combined_image_new.paste(combined_image, (0, 0))
-                combined_image_new.paste(img, (0, combined_image.height))
-                combined_image = combined_image_new
+#         # Combine images vertically
+#         for img in images:
+#             img = img.convert("RGB")
+#             if combined_image is None:
+#                 combined_image = img
+#             else:
+#                 new_width = max(combined_image.width, img.width)
+#                 new_height = combined_image.height + img.height
+#                 combined_image_new = Image.new("RGB", (new_width, new_height), (255, 255, 255))
+#                 combined_image_new.paste(combined_image, (0, 0))
+#                 combined_image_new.paste(img, (0, combined_image.height))
+#                 combined_image = combined_image_new
 
-        # Return combined image as bytes
-        img_byte_arr = BytesIO()
-        combined_image.save(img_byte_arr, format="JPEG")
-        img_byte_arr.seek(0)
-        return img_byte_arr.getvalue()
+#         # Return combined image as bytes
+#         img_byte_arr = BytesIO()
+#         combined_image.save(img_byte_arr, format="JPEG")
+#         img_byte_arr.seek(0)
+#         return img_byte_arr.getvalue()
 
-    except Exception as e:
-        logging.error(f"An error occurred during PDF processing: {e}")
-        return None
+#     except Exception as e:
+#         logging.error(f"An error occurred during PDF processing: {e}")
+#         return None
 
 # Function to handle uploaded image and extract bytes
 def input_image_setup(uploaded_file):
@@ -97,7 +97,7 @@ st.markdown("""
 
 # File upload section
 st.subheader("1. Upload Your File 📁")
-uploaded_file = st.file_uploader("Choose a file...", type=["pdf", "jpg", "jpeg", "png"], label_visibility="collapsed")
+uploaded_file = st.file_uploader("Choose a file...", type=[ "jpg", "jpeg", "png"], label_visibility="collapsed")
 
 # Display a preview of the uploaded image if available
 if uploaded_file is not None:
