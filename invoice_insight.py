@@ -132,7 +132,7 @@ if submit:
                 response = get_gemini_response(input_prompt, image_data, """
                     You are an expert in understanding invoices.
                     You will receive input images as invoices & you will have to answer questions based on the input image.
-                                               if you find that the image is not related to invoice just strictly say "Please upload a valid invoice, file uploaded is not an invoice". 
+                                               if you find that the image is not related to invoice just strictly say "Please upload a valid invoice, file uploaded is not an invoice". In this case do not say anything else be this precise only no need to interpret the image. 
                 """)
                 st.subheader("Gemini's Response 🤖")
                 st.write(response)
